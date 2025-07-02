@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图像压缩工具</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>图像压缩工具</h1>
+    <p class="subtitle">上传图片，在线压缩，预览并下载压缩后图片</p>
+    <div class="upload-area" id="upload-area">
+      <input type="file" id="file-input" accept="image/png, image/jpeg" />
+      <label for="file-input" class="upload-label">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="32" height="32" rx="8" fill="#F5F5F7"/>
+          <path d="M24 16V32" stroke="#0071E3" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M16 24L24 16L32 24" stroke="#0071E3" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <span>点击或拖拽图片到此处</span>
+      </label>
+    </div>
+    <div class="preview-area" id="preview-area" style="display:none;">
+      <h2>原图预览</h2>
+      <img id="original-img" src="" alt="原图预览" />
+      <p id="original-size"></p>
+      <button id="compress-btn">压缩图片</button>
+    </div>
+    <div class="result-area" id="result-area" style="display:none;">
+      <h2>压缩后预览</h2>
+      <img id="compressed-img" src="" alt="压缩后预览" />
+      <p id="compressed-size"></p>
+      <a id="download-btn" href="#" download="compressed.jpg">下载压缩图片</a>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html> 
