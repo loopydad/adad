@@ -1,96 +1,44 @@
-// 获取页面元素
-const fileInput = document.getElementById('file-input');
-const uploadArea = document.getElementById('upload-area');
-const previewArea = document.getElementById('preview-area');
-const originalImg = document.getElementById('original-img');
-const originalSize = document.getElementById('original-size');
-const compressBtn = document.getElementById('compress-btn');
-const resultArea = document.getElementById('result-area');
-const compressedImg = document.getElementById('compressed-img');
-const compressedSize = document.getElementById('compressed-size');
-const downloadBtn = document.getElementById('download-btn');
+const chatBox = document.getElementById('chat-box');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
 
-let originalFile = null;
-let compressedBlob = null;
-let originalFileSize = 0;
+const bearReplies = [
+  '嗷呜～我在认真听你说话呢！',
+  '抱抱你，今天也要对自己温柔一点呀。',
+  '小熊建议：先喝一口温水，再慢慢想办法。',
+  '你说得真好，我的毛茸茸耳朵都竖起来啦！',
+  '嘿嘿，你来找我聊天我超开心的。',
+  '没关系，我们可以一步一步来，我陪你。'
+];
 
-// 拖拽上传支持
-uploadArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  uploadArea.classList.add('dragover');
-});
-uploadArea.addEventListener('dragleave', (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove('dragover');
-});
-uploadArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove('dragover');
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    handleFile(e.dataTransfer.files[0]);
-  }
-});
-
-fileInput.addEventListener('change', (e) => {
-  if (e.target.files && e.target.files[0]) {
-    handleFile(e.target.files[0]);
-  }
-});
-
-// 处理上传的图片文件
-function handleFile(file) {
-  if (!file.type.startsWith('image/')) {
-    alert('请上传图片文件');
-    return;
-  }
-  originalFile = file;
-  originalFileSize = file.size;
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    originalImg.src = e.target.result;
-    previewArea.style.display = 'block';
-    originalSize.textContent = `原图大小：${(file.size/1024).toFixed(2)} KB`;
-    resultArea.style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+function addMessage(text, sender) {
+  const msg = document.createElement('div');
+  msg.className = `msg ${sender}`;
+  msg.textContent = text;
+  chatBox.appendChild(msg);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 压缩图片
-compressBtn.addEventListener('click', () => {
-  if (!originalFile) return;
-  const img = new window.Image();
-  img.onload = function () {
-    // 创建canvas绘制图片
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, img.width, img.height);
+function pickReply(userText) {
+  if (userText.includes('你好')) return '你好呀！我是你的小熊朋友 🐻';
+  if (userText.includes('难过') || userText.includes('伤心')) return '来，小熊给你一个大大的抱抱。';
+  if (userText.includes('晚安')) return '晚安喔，愿你梦里也有软软的小熊云朵。';
 
-    // 判断图片类型，PNG转为JPEG压缩
-    let outputType = 'image/jpeg';
-    let ext = 'jpg';
-    let quality = 0.6; // 更低质量以保证压缩效果
-    if (originalFile.type === 'image/jpeg') {
-      outputType = 'image/jpeg';
-      ext = 'jpg';
-      quality = 0.6;
-    }
-    // PNG一律转为JPEG
+  const idx = Math.floor(Math.random() * bearReplies.length);
+  return bearReplies[idx];
+}
 
-    canvas.toBlob(function(blob) {
-      compressedBlob = blob;
-      const url = URL.createObjectURL(blob);
-      compressedImg.src = url;
-      compressedSize.textContent = `压缩后大小：${(blob.size/1024).toFixed(2)} KB`;
-      downloadBtn.href = url;
-      downloadBtn.download = `compressed.${ext}`;
-      resultArea.style.display = 'block';
-      // 压缩后体积更大时提示
-      if (blob.size >= originalFileSize) {
-        alert('⚠️ 压缩后图片体积未减小，建议尝试更小的原图或使用JPEG格式上传。');
-      }
-    }, outputType, quality);
-  };
-  img.src = URL.createObjectURL(originalFile);
-}); 
+addMessage('你好，我是小熊！今天想聊点什么呀？', 'bear');
+
+chatForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  addMessage(text, 'user');
+  userInput.value = '';
+
+  setTimeout(() => {
+    addMessage(pickReply(text), 'bear');
+  }, 350);
+});
